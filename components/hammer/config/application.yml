@@ -34,7 +34,8 @@ profiles:
 #each of the elements below will launch one call with the dtmf settings, the lenght of call
 #and the profile to use from above.
 dial_strategies:
-  - number: 1000            #This is the number to dial
+  - description: strategy1
+    number: 1000            #This is the number to dial
     profile: 1              #Which trunk to you want to use above
     callerid: HammerProfile2
     send_dtmf: 'wwww#wwww1' #This may be blank to send no DTMF
@@ -42,7 +43,8 @@ dial_strategies:
     before_delay: 2         #This may be set to zero to have no delay
     after_delay: 2          #This may be set to zer to have no delay
     message: tt-monkeys     #Message to play
-  - number: 2000
+  - description: strategy2
+    number: 2000
     profile: 1
     callerid: HammerProfile2
     send_dtmf: 'wwww#wwww1'
@@ -50,7 +52,8 @@ dial_strategies:
     before_delay: 2
     after_delay: 2
     message: tt-monkeys
-  - number: 3000
+  - description: strategy1
+    number: 3000
     profile: 2
     callerid: HammerProfile2
     send_dtmf: 'wwww#wwww1'
