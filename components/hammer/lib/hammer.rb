@@ -5,7 +5,7 @@ class Hammer
     #Load the configuration file
     config_file = File.expand_path(File.dirname(__FILE__) + "/../config/application.yml")
     @config = YAML::load_file(config_file)
-    
+    @thread_lock = Mutex.new
     build_strategies
   end
   
@@ -58,14 +58,16 @@ class Hammer
       channel = $HELPERS["hammer"][profile]["channel"] + dial_strategy[:number].to_s
     end
     
-    response = @adhearsion.proxy.originate( { "Channel" => channel,
-                                              "Context" =>  @config["profiles"][dial_strategy[:profile]]["context"],
-                                              "Exten" =>  @config["profiles"][dial_strategy[:profile]]["extension"],
-                                              "Priority" => @config["profiles"][dial_strategy[:profile]]["priority"],
-                                              "Callerid" => dial_strategy[:callerid],
-                                              "Timeout" => @config["profiles"][dial_strategy[:profile]]["timeout"],
-                                              "Variable" => dial_strategy[:instructions],
-					                                    "Async" => @config["profiles"][dial_strategy[:profile]]["async"] } )
+    @thread_lock.synchronize do
+      response = @adhearsion.proxy.originate( { "Channel" => channel,
+                                                "Context" =>  @config["profiles"][dial_strategy[:profile]]["context"],
+                                                "Exten" =>  @config["profiles"][dial_strategy[:profile]]["extension"],
+                                                "Priority" => @config["profiles"][dial_strategy[:profile]]["priority"],
+                                                "Callerid" => dial_strategy[:callerid],
+                                                "Timeout" => @config["profiles"][dial_strategy[:profile]]["timeout"],
+                                                "Variable" => dial_strategy[:instructions],
+					                                      "Async" => @config["profiles"][dial_strategy[:profile]]["async"] } )
+    end
 					                                    
     return response
   end
