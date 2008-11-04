@@ -1,0 +1,60 @@
+#Config file for the Dialer App
+cycle_length: 1 #Number of calls to launch for each dial_strategy
+delay_between_cycle: 300 #Number of seconds to delay between each cylce of the dial_strategy
+delay_between_calls: 2 #Seconds to delay between launching each call, may also be random
+max_random_between_calls: 5 #Maximum call length when random is used for delay_between_calls
+thread_cycles: false #Set this to true to launch each dial_strategy cycle in its own thread to create simultaneous calling
+max_random_call_length: 200 #Maximum call length when random is used for call_length
+
+#Settings for the Originate command to the Manager API, each one is a unique profile
+#Context must be adhearsion_hammer unless you have written your own either in Adhearsion
+#or in the Asterisk dialplan. Also, extension and priority should match what you have
+#put in your dialplan. The recommended dialplan in Asterisk is:
+#   [adhearsion_hammer]
+#   exten => 1000,1,AGI(agi://path_to_adhearsion_hammer_agi_server)
+#   exten => 1000,2,Hangup
+#Each strategy number must be in order: 1, 2, 3, etc
+profiles:
+  - number: 1
+    channel: IAX2/adhearsion_hammer:hammer1234@call.mydomain.net/ 
+    context: adhearsion_hammer
+    extension: 1000
+    priority: 1
+    timeout: 43200000
+    async: TRUE
+  - number: 2
+    channel: IAX2/teliax/
+    context: adhearsion_hammer
+    extension: 1000
+    priority: 1
+    timeout: 43200000
+    async: TRUE
+  
+#This is where you set how many calls in a cycle you want to launch and of what type
+#each of the elements below will launch one call with the dtmf settings, the lenght of call
+#and the profile to use from above.
+dial_strategies:
+  - number: 1000            #This is the number to dial
+    profile: 1              #Which trunk to you want to use above
+    callerid: HammerProfile2
+    send_dtmf: 'wwww#wwww1' #This may be blank to send no DTMF
+    call_length: 180        #This may be set to random
+    before_delay: 2         #This may be set to zero to have no delay
+    after_delay: 2          #This may be set to zer to have no delay
+    message: tt-monkeys     #Message to play
+  - number: 2000
+    profile: 1
+    callerid: HammerProfile2
+    send_dtmf: 'wwww#wwww1'
+    call_length: 180
+    before_delay: 2
+    after_delay: 2
+    message: tt-monkeys
+  - number: 3000
+    profile: 2
+    callerid: HammerProfile2
+    send_dtmf: 'wwww#wwww1'
+    call_length: 180
+    before_delay: 2
+    after_delay: 2
+    message: tt-monkeys
